@@ -1,0 +1,26 @@
+# Quarto output
+_output/
+.quarto/
+*.html
+!survey/index.html
+
+# R
+.Rhistory
+.RData
+.Rproj.user/
+*.Rproj
+
+# Data (keep folder structure, ignore raw files)
+data/raw/*
+!data/raw/.gitkeep
+
+# Claude Code
+.claude/
+
+# macOS
+.DS_Store
+
+# Python / Jupyter
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/

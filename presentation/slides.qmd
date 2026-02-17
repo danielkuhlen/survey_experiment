@@ -1,0 +1,176 @@
+---
+title: "[PROJECT TITLE]"
+subtitle: "Survey Experiment Design"
+author:
+  - "Daniel Kuhlen"
+  - "Giovanna Lapresa"
+  - "Jorge Zavala"
+date: today
+format:
+  revealjs:
+    theme: default
+    slide-number: true
+    progress: true
+    toc: false
+    logo: ""
+    footer: "Field Experiments Class 2026"
+    highlight-style: github
+    code-fold: true
+    self-contained: true
+bibliography: references.bib
+---
+
+## Overview
+
+1. Research question & motivation
+2. Key design elements
+3. Implementation plan
+4. Open questions for the group
+
+---
+
+# 1. Question & Motivation
+
+## Research Question
+
+> **[STATE YOUR RESEARCH QUESTION HERE]**
+
+- [Sentence connecting to the broader theoretical literature]
+- [Why does this question matter empirically?]
+- [What gap does it fill?]
+
+## Theoretical Foundation
+
+- **Theory:** [Name the theory / mechanism]
+- **Expectation:** [What does theory predict?]
+- **Contribution:** [How does this study advance that theory?]
+
+## Connection to Broader Research Agenda
+
+- [How does this study fit within your larger body of work?]
+- [What follow-up questions does it open?]
+- [Potential for cumulative / collaborative research?]
+
+---
+
+# 2. Key Design Elements
+
+## Population of Interest
+
+| Dimension | Description |
+|-----------|-------------|
+| Target population | [e.g., adult citizens, party members, legislators] |
+| Sampling frame | [e.g., online panel, registry, quota sample] |
+| Expected N | [Approximate sample size] |
+| Rationale | [Why this population?] |
+
+## Inquiry: Measurement or Causal?
+
+::: {.columns}
+::: {.column width="50%"}
+**Primary inquiry**
+
+[Measurement / Causal effect estimation]
+:::
+::: {.column width="50%"}
+**Rationale**
+
+[Why this type of inquiry is appropriate for the question]
+:::
+:::
+
+- **Estimand:** [Define the quantity of interest precisely]
+- **Identification strategy:** [How will you achieve identification?]
+
+## Assignment Scheme
+
+```
+[TREATMENT ARM A]  ←─────────────────────────────────
+                                                      |
+Respondents ──── Random assignment ──────────────────|
+                                                      |
+[TREATMENT ARM B]  ←─────────────────────────────────
+                    (+ Control if applicable)
+```
+
+- **Unit of randomization:** [Individual / cluster / block]
+- **Number of arms:** [e.g., 2×2 factorial, single treatment]
+- **Blocking variables:** [e.g., gender, region, partisanship]
+
+## Analysis Plan
+
+- **Primary estimator:** [OLS / ATE / LATE / Difference-in-means]
+- **Outcome variable(s):** [List outcomes]
+- **Covariates / controls:** [Pre-registered controls]
+- **Heterogeneous effects:** [Subgroup analyses planned]
+- **Pre-registration:** [OSF / AsPredicted — planned/done]
+
+---
+
+# 3. Implementation
+
+## Team
+
+| Role | Person | Responsibility |
+|------|--------|----------------|
+| PI | Daniel Kuhlen | Overall design & analysis |
+| [Role] | [Name] | [Task] |
+| [Role] | [Name] | [Task] |
+
+## Survey Instrument
+
+- **Platform:** Custom HTML/JS (self-hosted)
+- **Number of questions:** [N] questions
+- **Question types:** [e.g., Likert scales, open-ended, vignettes]
+- **Treatment delivery:** [How/where the treatment appears in the flow]
+
+## Timing
+
+| Module | Estimated time |
+|--------|---------------|
+| Consent & screener | ~1 min |
+| [Block 1] | ~[X] min |
+| Treatment vignette | ~[X] min |
+| [Block 2 — outcomes] | ~[X] min |
+| Debriefing | ~1 min |
+| **Total** | **~[X] min** |
+
+## Randomization
+
+- **Method:** [Script-based / platform / Qualtrics flow logic]
+- **Implementation:** `survey/js/randomization.js`
+- **Assignment logging:** [How treatment assignment is stored]
+- **Balance checks:** [Planned covariates for balance tables]
+
+## Risks of Interference
+
+- **Spillover:** [Is cross-contamination between units possible?]
+- **Attrition:** [Expected dropout and differential attrition risk]
+- **Demand effects:** [Steps taken to reduce social desirability bias]
+- **Mitigation:** [What measures address these risks?]
+
+## Ethical Considerations
+
+- **Deception:** [Yes/No — if yes, describe and justify debriefing]
+- **Sensitive topics:** [Describe any sensitive content]
+- **Data privacy:** [Anonymization, GDPR / IRB compliance]
+- **IRB status:** [Pending / Approved — institution]
+
+---
+
+# 4. Open Questions
+
+## Questions for the Group
+
+1. [Question about external validity / sampling]
+2. [Question about the treatment wording / realism]
+3. [Question about the identification strategy]
+4. [Question about ethical or practical feasibility]
+
+---
+
+## Thank You
+
+**Contact:** [your.email@university.edu]
+
+*Slides prepared with [Quarto](https://quarto.org)*
