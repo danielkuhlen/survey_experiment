@@ -1,8 +1,5 @@
-# Quarto output
-_output/
+# Quarto internals
 .quarto/
-*.html
-!survey/index.html
 
 # R
 .Rhistory
