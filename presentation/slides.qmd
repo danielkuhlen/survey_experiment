@@ -1,6 +1,6 @@
 ---
-title: "[PROJECT TITLE]"
-subtitle: "Survey Experiment Design"
+title: "Survey Experiment"
+subtitle: "Does information about human rights violations shift support for repression?"
 author:
   - "Daniel Kuhlen"
   - "Giovanna Lapresa"
@@ -17,41 +17,39 @@ format:
     highlight-style: github
     code-fold: true
     self-contained: true
-bibliography: references.bib
----
-
-## Overview
-
-1. Research question & motivation
-2. Key design elements
-3. Implementation plan
-4. Open questions for the group
-
+bibliography: ../../../literature/bib.bib
 ---
 
 # 1. Question & Motivation
 
 ## Research Question
 
-> **[STATE YOUR RESEARCH QUESTION HERE]**
+> **Does information about human rights violations shift support for repression?**
 
-- [Sentence connecting to the broader theoretical literature]
-- [Why does this question matter empirically?]
-- [What gap does it fill?]
+::: incremental
+- Information about repression can trigger **backlash** — but only under specific conditions (target sympathy, media framing, group identity)
+- We lack **causal evidence** on when and why citizen support state-violence
+:::
 
-## Theoretical Foundation
+## Theory: A triadic model of repression
 
-- **Theory:** [Name the theory / mechanism]
-- **Expectation:** [What does theory predict?]
-- **Contribution:** [How does this study advance that theory?]
+- Repression is not dyadic (state ↔ dissidents) — it is **triadic** [@lachapelle2022]:
+
+![](_figures/repression_figure.png){width=70% fig-align="center"}
+
+##
+
+| Mechanism | Prediction |
+|-----------|------------|
+| Threat-conditional legitimation | High threat → more repression support |
+| Backlash | Sympathetic targets + HRV info → less support |
+| Out-group permissiveness | Out-group targets → support persists even without threat |
 
 ## Connection to Broader Research Agenda
 
-- [How does this study fit within your larger body of work?]
-- [What follow-up questions does it open?]
-- [Potential for cumulative / collaborative research?]
-
----
+- **Daniel:**
+- **Jorge:**
+- **Giovanna:**
 
 # 2. Key Design Elements
 
@@ -59,53 +57,74 @@ bibliography: references.bib
 
 | Dimension | Description |
 |-----------|-------------|
-| Target population | [e.g., adult citizens, party members, legislators] |
-| Sampling frame | [e.g., online panel, registry, quota sample] |
-| Expected N | [Approximate sample size] |
-| Rationale | [Why this population?] |
+| Target population | Adult citizens Germany |
+| Sampling frame | Online quota sample via [panel provider TBD] |
+| Expected N | ~2000 |
+| Assumptions | General public are the bystanders in the triadic model |
 
-## Inquiry: Measurement or Causal?
+## Inquiry: Causal Effect Estimation
 
 ::: {.columns}
 ::: {.column width="50%"}
-**Primary inquiry**
+**Inquiry**
 
-[Measurement / Causal effect estimation]
+*Does information about human rights violations shift support for repression?*
+
 :::
 ::: {.column width="50%"}
-**Rationale**
+**Data strategy**
 
-[Why this type of inquiry is appropriate for the question]
+Random assignment of information exposure in a survey vignette
 :::
 :::
 
-- **Estimand:** [Define the quantity of interest precisely]
-- **Identification strategy:** [How will you achieve identification?]
+. . .
+
+- **Estimand:** ATE of HRV information on support for targeted repression
 
 ## Assignment Scheme
 
-```
-[TREATMENT ARM A]  ←─────────────────────────────────
-                                                      |
-Respondents ──── Random assignment ──────────────────|
-                                                      |
-[TREATMENT ARM B]  ←─────────────────────────────────
-                    (+ Control if applicable)
-```
+**2 × 2 between-subjects factorial design**
 
-- **Unit of randomization:** [Individual / cluster / block]
-- **Number of arms:** [e.g., 2×2 factorial, single treatment]
-- **Blocking variables:** [e.g., gender, region, partisanship]
+|  | Nonthreatening Event | Threatening Event |
+|---|---|---|
+| **No HRV information** | Control (n = 500) | Threat only (n = 500) |
+| **HRV information exposed** | HRV only (n = 500) | Threat + HRV (n = 500) |
+
+##
+
+```{mermaid}
+flowchart TD
+    A["<b>Sample</b><br/>N = 2,000<br/>Adult citizens, Germany"]
+    A --> B["<b>Block: Female</b><br/>n ≈ 1,000"]
+    A --> C["<b>Block: Male</b><br/>n ≈ 1,000"]
+
+    B --> B1["Control<br/>n = 250"]
+    B --> B2["Threat only<br/>n = 250"]
+    B --> B3["HRV only<br/>n = 250"]
+    B --> B4["Threat + HRV<br/>n = 250"]
+
+    C --> C1["Control<br/>n = 250"]
+    C --> C2["Threat only<br/>n = 250"]
+    C --> C3["HRV only<br/>n = 250"]
+    C --> C4["Threat + HRV<br/>n = 250"]
+
+    style B1 fill:#d1e7dd,stroke:#0f5132
+    style B2 fill:#fff3cd,stroke:#664d03
+    style B3 fill:#cff4fc,stroke:#055160
+    style B4 fill:#f8d7da,stroke:#842029
+    style C1 fill:#d1e7dd,stroke:#0f5132
+    style C2 fill:#fff3cd,stroke:#664d03
+    style C3 fill:#cff4fc,stroke:#055160
+    style C4 fill:#f8d7da,stroke:#842029
+```
 
 ## Analysis Plan
 
-- **Primary estimator:** [OLS / ATE / LATE / Difference-in-means]
-- **Outcome variable(s):** [List outcomes]
-- **Covariates / controls:** [Pre-registered controls]
-- **Heterogeneous effects:** [Subgroup analyses planned]
-- **Pre-registration:** [OSF / AsPredicted — planned/done]
-
----
+- **Primary estimator:** OLS / difference-in-means (ATE per arm)
+- **Primary outcome:** Support for repression 
+- **Secondary outcomes:** Trust in police/state; perceived legitimacy of protest; perceived threat to public safety
+- **Heterogeneous effects:** authoritarianism, political ideology, prior trust in police
 
 # 3. Implementation
 
@@ -113,64 +132,61 @@ Respondents ──── Random assignment ────────────�
 
 | Role | Person | Responsibility |
 |------|--------|----------------|
-| PI | Daniel Kuhlen | Overall design & analysis |
-| [Role] | [Name] | [Task] |
-| [Role] | [Name] | [Task] |
+| PI | Daniel Kuhlen | PAP, Design |
+| Co-I | Giovanna Lapresa | [TBD] |
+| Co-I | Jorge Zavala | [TBD] |
 
 ## Survey Instrument
 
-- **Platform:** Custom HTML/JS (self-hosted)
-- **Number of questions:** [N] questions
-- **Question types:** [e.g., Likert scales, open-ended, vignettes]
-- **Treatment delivery:** [How/where the treatment appears in the flow]
+- **Flow:** Consent → Screener/covariates → Treatment vignette → Outcome battery → Manipulation check → Debriefing
+
+- **Key blocks:**
+  - *Pre-treatment:* age, gender, education, political interest, prior trust in police
+  - *Treatment vignette:* ~100–150 word protest scenario
+  - *Post-treatment:* repression support, diffuse trust
+  - *Manipulation check:* recall of protest characteristics and information exposure
 
 ## Timing
 
 | Module | Estimated time |
 |--------|---------------|
-| Consent & screener | ~1 min |
-| [Block 1] | ~[X] min |
-| Treatment vignette | ~[X] min |
-| [Block 2 — outcomes] | ~[X] min |
-| Debriefing | ~1 min |
-| **Total** | **~[X] min** |
+| Background questions (covariates) | ~1 min |
+| Treatment vignette | ~1 min |
+| Outcome battery | ~2 min |
+| Manipulation check | ~1 min |
+| **Total** | **~5 min** |
 
-## Randomization
+## Randomisation
 
-- **Method:** [Script-based / platform / Qualtrics flow logic]
-- **Implementation:** `survey/js/randomization.js`
-- **Assignment logging:** [How treatment assignment is stored]
-- **Balance checks:** [Planned covariates for balance tables]
+- **Method:** ?
+- **Procedure:** ?
+- **Vignette construction:** Base scenario held constant; threat cue and HRV information paragraph added/removed per condition
+- **Balance checks:** Pre-treatment covariates compared across arms; flagged if standardised differences > 0.1
 
-## Risks of Interference
+## Risks: Interference & Demand Effects
 
-- **Spillover:** [Is cross-contamination between units possible?]
-- **Attrition:** [Expected dropout and differential attrition risk]
-- **Demand effects:** [Steps taken to reduce social desirability bias]
-- **Mitigation:** [What measures address these risks?]
+- **Attrition:** Differential dropout if HRV information is distressing — will monitor dropout rates by condition; include opt-out option
+- **Demand effects:** Sensitive topic (police violence) may induce social desirability; mitigated by anonymity guarantee and neutral question framing
+- **Manipulation failure:** HRV information may not be read carefully — addressed by comprehension check and attention screener
 
 ## Ethical Considerations
 
-- **Deception:** [Yes/No — if yes, describe and justify debriefing]
-- **Sensitive topics:** [Describe any sensitive content]
-- **Data privacy:** [Anonymization, GDPR / IRB compliance]
-- **IRB status:** [Pending / Approved — institution]
-
----
+- **Sensitive content:** Scenarios describe state violence — may cause discomfort
+- **Mitigation:** Content warning on consent screen; opt-out at any point without penalty; text-only stimuli (no graphic images/video)
+- **Deception:** TBD
+- **Debriefing:** TBD
+- **IRB:** WZB (& HU?): For HU next deadline for submission 02-04-2026
 
 # 4. Open Questions
 
 ## Questions for the Group
 
-1. [Question about external validity / sampling]
-2. [Question about the treatment wording / realism]
-3. [Question about the identification strategy]
-4. [Question about ethical or practical feasibility]
+1. **Country context:** 
 
----
+2. **Event:** Should we use hypothetical scenarios? Real world events? In or outside Germany?
 
-## Thank You
+2. **Treatment realism:** How detailed should the HRV information be (brief news headline vs. detailed account), and does detail level affect credibility vs. discomfort trade-offs?
 
-**Contact:** [your.email@university.edu]
+3. **Factorial vs. single-arm:** Is the 2×2 design the right call?
 
-*Slides prepared with [Quarto](https://quarto.org)*
+## Literature
