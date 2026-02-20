@@ -1,6 +1,6 @@
 ---
 title: "Survey Experiment"
-subtitle: "Does information about human rights violations shift support for repression?"
+subtitle: "Does Information About Repression Shift Support for Authoritarian Regimes?"
 author:
   - "Daniel Kuhlen"
   - "Giovanna Lapresa"
@@ -24,16 +24,17 @@ bibliography: ../../../literature/bib.bib
 
 ## Research Question
 
-> **Does information about human rights violations shift support for repression?**
+> **Does Information About Repression Shift Support for Authoritarian Regimes?**
 
 ::: incremental
-- Information about repression can trigger **backlash** — but only under specific conditions (target sympathy, media framing, group identity)
-- We lack **causal evidence** on when and why citizen support state-violence
+- Information about repression can trigger **backlash** — but only under specific conditions (target sympathy, media framing, group identity) [@davenport2007]
+- A lot of people support repression!
+  - We lack **causal evidence** on when and why citizens support state-violence
 :::
 
 ## Theory: A triadic model of repression
 
-- Repression is not dyadic (state ↔ dissidents) — it is **triadic** [@lachapelle2022]:
+- Repression is not dyadic (state ↔ dissidents) — it is **triadic** [@lachapelle2022; @zhu2025]:
 
 ![](_figures/repression_figure.png){width=70% fig-align="center"}
 
@@ -47,9 +48,11 @@ bibliography: ../../../literature/bib.bib
 
 ## Connection to Broader Research Agenda
 
-- **Daniel:**
-- **Jorge:**
-- **Giovanna:**
+- **Daniel:** 1 PhD paper on this mechanism for the case of militarized policing - would like to add this to PhD
+
+- **Jorge:** Political violence
+- **Giovanna:** Political violence
+
 
 # 2. Key Design Elements
 
@@ -59,7 +62,7 @@ bibliography: ../../../literature/bib.bib
 |-----------|-------------|
 | Target population | Adult citizens Germany |
 | Sampling frame | Online quota sample via [panel provider TBD] |
-| Expected N | ~2000 |
+| Expected N | ~2000? |
 | Assumptions | General public are the bystanders in the triadic model |
 
 ## Inquiry: Causal Effect Estimation
@@ -68,7 +71,7 @@ bibliography: ../../../literature/bib.bib
 ::: {.column width="50%"}
 **Inquiry**
 
-*Does information about human rights violations shift support for repression?*
+*Does Information About Repression Shift Support for Authoritarian Regimes?*
 
 :::
 ::: {.column width="50%"}
@@ -86,45 +89,25 @@ Random assignment of information exposure in a survey vignette
 
 **2 × 2 between-subjects factorial design**
 
-|  | Nonthreatening Event | Threatening Event |
+|  | No Threat | Threat |
 |---|---|---|
 | **No HRV information** | Control (n = 500) | Threat only (n = 500) |
 | **HRV information exposed** | HRV only (n = 500) | Threat + HRV (n = 500) |
 
-##
+## Vignettes
 
-```{mermaid}
-flowchart TD
-    A["<b>Sample</b><br/>N = 2,000<br/>Adult citizens, Germany"]
-    A --> B["<b>Block: Female</b><br/>n ≈ 1,000"]
-    A --> C["<b>Block: Male</b><br/>n ≈ 1,000"]
+We are thinking about three potential cases to do this:
 
-    B --> B1["Control<br/>n = 250"]
-    B --> B2["Threat only<br/>n = 250"]
-    B --> B3["HRV only<br/>n = 250"]
-    B --> B4["Threat + HRV<br/>n = 250"]
+(1) hypothetical scenario: *imagine a state x ...*
 
-    C --> C1["Control<br/>n = 250"]
-    C --> C2["Threat only<br/>n = 250"]
-    C --> C3["HRV only<br/>n = 250"]
-    C --> C4["Threat + HRV<br/>n = 250"]
+(2) real-world case of repression / state violence (ethics?)
 
-    style B1 fill:#d1e7dd,stroke:#0f5132
-    style B2 fill:#fff3cd,stroke:#664d03
-    style B3 fill:#cff4fc,stroke:#055160
-    style B4 fill:#f8d7da,stroke:#842029
-    style C1 fill:#d1e7dd,stroke:#0f5132
-    style C2 fill:#fff3cd,stroke:#664d03
-    style C3 fill:#cff4fc,stroke:#055160
-    style C4 fill:#f8d7da,stroke:#842029
-```
+(3) repression / state violence by Germany (frontex? police brutality?)
 
 ## Analysis Plan
 
-- **Primary estimator:** OLS / difference-in-means (ATE per arm)
-- **Primary outcome:** Support for repression 
-- **Secondary outcomes:** Trust in police/state; perceived legitimacy of protest; perceived threat to public safety
-- **Heterogeneous effects:** authoritarianism, political ideology, prior trust in police
+- **estimator:** OLS / difference-in-means (ATE per arm)
+- **outcome:** support for authoritarian regime, aid-allocation, support for cooperation
 
 # 3. Implementation
 
@@ -142,9 +125,9 @@ flowchart TD
 
 - **Key blocks:**
   - *Pre-treatment:* age, gender, education, political interest, prior trust in police
-  - *Treatment vignette:* ~100–150 word protest scenario
-  - *Post-treatment:* repression support, diffuse trust
-  - *Manipulation check:* recall of protest characteristics and information exposure
+  - *Treatment vignette:* ~100–150 word scenario
+  - *Post-treatment:* outcome battery
+  - *Manipulation check:* recall of scenario characteristics and information exposure
 
 ## Timing
 
@@ -161,12 +144,10 @@ flowchart TD
 - **Method:** ?
 - **Procedure:** ?
 - **Vignette construction:** Base scenario held constant; threat cue and HRV information paragraph added/removed per condition
-- **Balance checks:** Pre-treatment covariates compared across arms; flagged if standardised differences > 0.1
 
-## Risks: Interference & Demand Effects
+## Risks
 
 - **Attrition:** Differential dropout if HRV information is distressing — will monitor dropout rates by condition; include opt-out option
-- **Demand effects:** Sensitive topic (police violence) may induce social desirability; mitigated by anonymity guarantee and neutral question framing
 - **Manipulation failure:** HRV information may not be read carefully — addressed by comprehension check and attention screener
 
 ## Ethical Considerations
