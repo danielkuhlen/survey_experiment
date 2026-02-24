@@ -1,0 +1,31 @@
+# Notes from Call on the 23-02-2026
+
+**Notes**
+
+(1) theory general
+    - understand theory
+    - we need to go back to the literature; understand what we are interested in 
+
+(2) outcome variable
+    - this is actually not support
+    - more cooperation based
+    - measurement of intensity of support
+
+**Current To-Do's**
+
+(1) populate zotero
+    - look for close designs and theory relevant papers
+
+(2) think about contribution tomorrow
+    - support measurement
+
+(3) what is the intervention?
+    - what is gonna end up in the vignettes?
+    - right now it is only hrv or not
+    - what is the target group of the hrv
+    - in the vignettes we should have nothing on outsiders 
+    - this is about within the country!
+
+(4) better link with transitional justice literature
+    - gov x is doing hrv against civilian
+    - how does this affect government trust

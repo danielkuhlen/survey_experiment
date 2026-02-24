@@ -1,55 +1,73 @@
-# [PROJECT TITLE] — Survey Experiment
+# Survey Experiment
+### Does Information About Repression Shift Support for Authoritarian Regimes?
+
+Daniel Kuhlen, Giovanna Lapresa, Jorge Zavala
+
+---
 
 ## Project structure
 
 ```
 survey_experiment/
-├── _quarto.yml               # Quarto project configuration
 │
-├── presentation/
-│   ├── slides.qmd            # Design presentation (revealjs → HTML)
-│   └── references.bib        # BibTeX references
+├── 01_data/
+│   ├── input/          # Raw data files (survey responses, etc.)
+│   └── output/         # Processed / analysis-ready data
 │
-├── survey/                   # Online survey (custom HTML/JS)
-│   ├── index.html            # Entry point — open in browser to run survey
-│   ├── css/style.css         # Styling
-│   └── js/
-│       ├── config.js         # ★ Edit this: questions & study metadata
-│       ├── randomization.js  # ★ Edit this: vignette texts & assignment logic
-│       └── app.js            # Survey engine (rendering, validation, export)
+├── 02_code/
+│   ├── analysis/       # Statistical analysis scripts
+│   │   └── main.R      # Primary analysis (OLS, balance tables, figures)
+│   └── datawrangling/  # Data cleaning and preparation scripts
 │
-├── data/
-│   └── raw/                  # Raw response files (gitignored)
+├── 03_deliverables/
+│   └── presentations/  # Quarto slide decks (revealjs → HTML)
 │
-├── analysis/
-│   └── main.R                # Primary analysis script (R)
+├── 04_notes/           # Meeting notes, memos, planning documents
 │
-└── docs/                     # Additional documentation
+├── .gitignore
+└── README.md
 ```
 
-## Quick start
-
-### Presentation
-```bash
-quarto render presentation/slides.qmd
-```
-Opens as `presentation/slides.html`.
-
-### Survey (local preview)
-Open `survey/index.html` directly in a browser — no server needed for local
-testing. For deployment, copy the `survey/` folder to any static web host.
+---
 
 ## Workflow
 
-1. **Fill in content** — search for `[` to find all placeholder tags.
-2. **Presentation** — edit `presentation/slides.qmd` for the 10-slide deck.
-3. **Survey questions** — edit `survey/js/config.js` (question texts, options).
-4. **Treatment vignettes** — edit `survey/js/randomization.js` (vignette texts).
-5. **Analysis** — uncomment and adapt `analysis/main.R` after data collection.
+### 1. Data
+- Place raw survey response files in `01_data/input/`
+- Processed and analysis-ready files go in `01_data/output/`
+- Raw data files are gitignored — only the folder structure is tracked
 
-## Data export
+### 2. Code
+- Data cleaning scripts live in `02_code/datawrangling/`
+- Run cleaning scripts first to produce files in `01_data/output/`
+- Analysis scripts in `02_code/analysis/` read from `01_data/output/`
+- Run the primary analysis with:
+```bash
+Rscript 02_code/analysis/main.R
+```
 
-The survey currently logs responses to the browser console (development mode).
-Switch to one of the commented-out export options in `survey/js/app.js`:
-- **POST to backend** — requires a server endpoint
-- **Download JSON** — useful for offline pilots
+### 3. Presentations
+- Slide decks are Quarto `.qmd` files in `03_deliverables/presentations/`
+- Render a presentation to HTML with:
+```bash
+quarto render 03_deliverables/presentations/<filename>.qmd
+```
+- Rendered HTML files are tracked in git so collaborators can view slides without installing Quarto
+
+### 4. Notes
+- Meeting notes and planning documents go in `04_notes/`
+- File names follow the convention `DD_MM_<topic>.txt` (e.g. `23_02_notes.txt`)
+
+---
+
+## Git workflow
+
+```bash
+# Start of session — get latest changes from collaborators
+git pull
+
+# After making changes
+git add <file>
+git commit -m "short description of what changed"
+git push
+```

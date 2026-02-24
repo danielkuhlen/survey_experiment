@@ -1,0 +1,173 @@
+---
+title: "Survey Experiment"
+subtitle: "Does Information About Repression Shift Support for Authoritarian Regimes?"
+author:
+  - "Daniel Kuhlen"
+  - "Giovanna Lapresa"
+  - "Jorge Zavala"
+date: today
+format:
+  revealjs:
+    theme: default
+    slide-number: true
+    progress: true
+    toc: false
+    logo: ""
+    footer: "Field Experiments Class 2026"
+    highlight-style: github
+    code-fold: true
+    self-contained: true
+bibliography: ../../../literature/bib.bib
+---
+
+# 1. Question & Motivation
+
+## Research Question
+
+> **Does Information About Repression Shift Support for Authoritarian Regimes?**
+
+::: incremental
+- Information about repression can trigger **backlash** — but only under specific conditions (target sympathy, media framing, group identity) [@davenport2007]
+- A lot of people support repression!
+  - We lack **causal evidence** on when and why citizens support state-violence
+:::
+
+## Theory: A triadic model of repression
+
+- Repression is not dyadic (state ↔ dissidents) — it is **triadic** [@lachapelle2022; @zhu2025]:
+
+![](../../_output/figures/repression_figure.png){width=70% fig-align="center"}
+
+##
+
+| Mechanism | Prediction |
+|-----------|------------|
+| Threat-conditional legitimation | High threat → more repression support |
+| Backlash | Sympathetic targets + HRV info → less support |
+| Out-group permissiveness | Out-group targets → support persists even without threat |
+
+## Connection to Broader Research Agenda
+
+- **Daniel:** 1 PhD paper on this mechanism for the case of militarized policing - would like to add this to PhD
+
+- **Jorge:** Political violence
+- **Giovanna:** Political violence
+
+
+# 2. Key Design Elements
+
+## Population of Interest
+
+| Dimension | Description |
+|-----------|-------------|
+| Target population | Adult citizens Germany |
+| Sampling frame | Online quota sample via [panel provider TBD] |
+| Expected N | ~2000? |
+| Assumptions | General public are the bystanders in the triadic model |
+
+## Inquiry: Causal Effect Estimation
+
+::: {.columns}
+::: {.column width="50%"}
+**Inquiry**
+
+*Does Information About Repression Shift Support for Authoritarian Regimes?*
+
+:::
+::: {.column width="50%"}
+**Data strategy**
+
+Random assignment of information exposure in a survey vignette
+:::
+:::
+
+. . .
+
+- **Estimand:** ATE of HRV information on support for targeted repression
+
+## Assignment Scheme
+
+**2 × 2 between-subjects factorial design**
+
+|  | No Threat | Threat |
+|---|---|---|
+| **No HRV information** | Control (n = 500) | Threat only (n = 500) |
+| **HRV information exposed** | HRV only (n = 500) | Threat + HRV (n = 500) |
+
+## Vignettes
+
+We are thinking about three potential cases to do this:
+
+(1) hypothetical scenario: *imagine a state x ...*
+
+(2) real-world case of repression / state violence (ethics?)
+
+(3) repression / state violence by Germany (frontex? police brutality?)
+
+## Analysis Plan
+
+- **estimator:** OLS / difference-in-means (ATE per arm)
+- **outcome:** support for authoritarian regime, aid-allocation, support for cooperation
+
+# 3. Implementation
+
+## Team
+
+| Role | Person | Responsibility |
+|------|--------|----------------|
+| PI | Daniel Kuhlen | PAP, Design |
+| Co-I | Giovanna Lapresa | [TBD] |
+| Co-I | Jorge Zavala | [TBD] |
+
+## Survey Instrument
+
+- **Flow:** Consent → Screener/covariates → Treatment vignette → Outcome battery → Manipulation check → Debriefing
+
+- **Key blocks:**
+  - *Pre-treatment:* age, gender, education, political interest, prior trust in police
+  - *Treatment vignette:* ~100–150 word scenario
+  - *Post-treatment:* outcome battery
+  - *Manipulation check:* recall of scenario characteristics and information exposure
+
+## Timing
+
+| Module | Estimated time |
+|--------|---------------|
+| Background questions (covariates) | ~1 min |
+| Treatment vignette | ~1 min |
+| Outcome battery | ~2 min |
+| Manipulation check | ~1 min |
+| **Total** | **~5 min** |
+
+## Randomisation
+
+- **Method:** ?
+- **Procedure:** ?
+- **Vignette construction:** Base scenario held constant; threat cue and HRV information paragraph added/removed per condition
+
+## Risks
+
+- **Attrition:** Differential dropout if HRV information is distressing — will monitor dropout rates by condition; include opt-out option
+- **Manipulation failure:** HRV information may not be read carefully — addressed by comprehension check and attention screener
+
+## Ethical Considerations
+
+- **Sensitive content:** Scenarios describe state violence — may cause discomfort
+- **Mitigation:** Content warning on consent screen; opt-out at any point without penalty; text-only stimuli (no graphic images/video)
+- **Deception:** TBD
+- **Debriefing:** TBD
+- **IRB:** WZB (& HU?): For HU next deadline for submission 02-04-2026
+
+# 4. Open Questions
+
+## Questions for the Group
+
+1. **Country context:** 
+
+2. **Event:** Should we use hypothetical scenarios? Real world events? In or outside Germany?
+
+2. **Treatment realism:** How detailed should the HRV information be (brief news headline vs. detailed account), and does detail level affect credibility vs. discomfort trade-offs?
+
+3. **Factorial vs. single-arm:** Is the 2×2 design the right call?
+
+## Literature
