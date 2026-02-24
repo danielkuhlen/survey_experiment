@@ -71,11 +71,14 @@ All writing is done in Overleaf in the shared projcet `survey_experiment_class_2
 ## Git workflow
 
 ```bash
-# Start of session — get latest changes from collaborators
+# start of session — get latest changes from collaborators
 git pull
 
-# After making changes
-git add <file>
+# after making changes
+git add <file> 
+# or in case to push all files changed
+git add . 
+# commit and comment
 git commit -m "short description of what changed"
 git push
 ```
