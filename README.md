@@ -1,4 +1,5 @@
 # Survey Experiment
+
 ### Does Information About Repression Shift Support for Authoritarian Regimes?
 
 Daniel Kuhlen, Giovanna Lapresa, Jorge Zavala
@@ -11,18 +12,22 @@ Daniel Kuhlen, Giovanna Lapresa, Jorge Zavala
 survey_experiment/
 │
 ├── 01_data/
-│   ├── input/          # Raw data files (survey responses, etc.)
-│   └── output/         # Processed / analysis-ready data
+│   ├── input/          # raw data files (survey responses, etc.)
+│   └── output/         # processed / analysis-ready data
 │
 ├── 02_code/
-│   ├── analysis/       # Statistical analysis scripts
-│   │   └── main.R      # Primary analysis (OLS, balance tables, figures)
-│   └── datawrangling/  # Data cleaning and preparation scripts
+│   ├── analysis/       # all analysis
+│   │   └── main.R      # template script (OLS, balance tables, figures)
+│   └── datawrangling/  # data cleaning and preparation scripts
 │
 ├── 03_deliverables/
-│   └── presentations/  # Quarto slide decks (revealjs → HTML)
+│   └── presentations/  # slide decks for all presentations
 │
-├── 04_notes/           # Meeting notes, memos, planning documents
+├── 04_notes/           # meeting notes, memos, planning documents
+│
+│
+│── 05_bibliography
+│   └── bib.bib         # bibtex library with all sources from zotero
 │
 ├── .gitignore
 └── README.md
@@ -33,32 +38,35 @@ survey_experiment/
 ## Workflow
 
 ### 1. Data
-- Place raw survey response files in `01_data/input/`
-- Processed and analysis-ready files go in `01_data/output/`
-- Raw data files are gitignored — only the folder structure is tracked
+- place raw survey response files in `01_data/input/`
+- processed and analysis-ready files go in `01_data/output/`
+- raw data files are gitignored — only the folder structure is tracked
 
 ### 2. Code
-- Data cleaning scripts live in `02_code/datawrangling/`
-- Run cleaning scripts first to produce files in `01_data/output/`
-- Analysis scripts in `02_code/analysis/` read from `01_data/output/`
-- Run the primary analysis with:
-```bash
-Rscript 02_code/analysis/main.R
-```
+- data cleaning scripts live in `02_code/datawrangling/`
+- run cleaning scripts first to produce files in `01_data/output/`
+- analysis scripts in `02_code/analysis/` read from `01_data/output/`
+- run the primary analysis with:
 
 ### 3. Presentations
-- Slide decks are Quarto `.qmd` files in `03_deliverables/presentations/`
-- Render a presentation to HTML with:
-```bash
-quarto render 03_deliverables/presentations/<filename>.qmd
-```
-- Rendered HTML files are tracked in git so collaborators can view slides without installing Quarto
+- slide decks are Quarto `.qmd` files in `03_deliverables/presentations/`
+- rendered HTML files are tracked in git
 
 ### 4. Notes
-- Meeting notes and planning documents go in `04_notes/`
-- File names follow the convention `DD_MM_<topic>.txt` (e.g. `23_02_notes.txt`)
+- meeting notes and planning documents go in `04_notes/`
+- file names follow the convention `DD_MM_<topic>.txt` (e.g. `23_02_notes.txt`)
+
+### 5. Bibliography
+- the `05_bibliography/bib.bib` file is synced with the shared zotero folder
+- when using citations for any deliverables reference this file with relative file paths
 
 ---
+
+## Writing
+All writing is done in Overleaf in the shared projcet `survey_experiment_class_26`.
+- **To-Do:** 
+    (1) Sync _output/figures and output/tables folders to zotero
+    (2) Set up document for PAP and document for paper
 
 ## Git workflow
 
