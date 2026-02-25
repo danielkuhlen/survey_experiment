@@ -18,7 +18,7 @@ survey_experiment/
 ├── 02_code/
 │   ├── analysis/          # all analysis
 │   │   └── main.R         # template script (OLS, balance tables, figures)
-│   └── datawrangling/     # data cleaning and preparation scripts
+│   ├── datawrangling/     # data cleaning and preparation scripts
 │   └── design_declaration # all design declarations 
 │
 ├── 03_deliverables/
