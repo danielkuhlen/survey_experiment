@@ -12,22 +12,23 @@ Daniel Kuhlen, Giovanna Lapresa, Jorge Zavala
 survey_experiment/
 │
 ├── 01_data/
-│   ├── input/          # raw data files (survey responses, etc.)
-│   └── output/         # processed / analysis-ready data
+│   ├── input/             # raw data files (survey responses, etc.)
+│   └── output/            # processed / analysis-ready data
 │
 ├── 02_code/
-│   ├── analysis/       # all analysis
-│   │   └── main.R      # template script (OLS, balance tables, figures)
-│   └── datawrangling/  # data cleaning and preparation scripts
+│   ├── analysis/          # all analysis
+│   │   └── main.R         # template script (OLS, balance tables, figures)
+│   ├── datawrangling/     # data cleaning and preparation scripts
+│   └── design_declaration # all design declarations 
 │
 ├── 03_deliverables/
-│   └── presentations/  # slide decks for all presentations
+│   └── presentations/.    # slide decks for all presentations
 │
-├── 04_notes/           # meeting notes, memos, planning documents
+├── 04_notes/              # meeting notes, memos, planning documents
 │
 │
 │── 05_bibliography
-│   └── bib.bib         # bibtex library with all sources from zotero
+│   └── bib.bib            # bibtex library with all sources from zotero
 │
 ├── .gitignore
 └── README.md
