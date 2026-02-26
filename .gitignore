@@ -1,5 +1,7 @@
 # Quarto internals
 .quarto/
+*_cache/
+*_files/
 
 # R
 .Rhistory

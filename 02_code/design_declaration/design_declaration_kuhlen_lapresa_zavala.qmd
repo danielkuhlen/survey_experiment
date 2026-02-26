@@ -1,6 +1,6 @@
 ---
 title: "Design Declaration"
-subtitle: "How Does Target Framing Affect Support for Repression?"
+subtitle: "Punish or Reconcile? Target Framing, Performance Cues, and Authoritarian Legitimation through Repression"
 author:
     - Daniel Kuhlen
     - Giovanna Lapresa
@@ -16,7 +16,11 @@ bibliography: ../../05_bibliography/bib.bib
 #| include: false
 
 # packages
-pacman::p_load(tidyverse, rio, DeclareDesign, estimatr, scales)
+pacman::p_load(tidyverse, 
+               rio,
+               DeclareDesign,
+               estimatr,
+               scales)
 ```
 
 # Theory
@@ -31,7 +35,7 @@ This design allows us to (1) test [@lachapelle2022] triadic theory on repression
 
 ## Design Declaration
 
-We evaluate the design with the `DeclareDesign` package. The **model** assumes additive effects for the Stage 1 treatments (justice and threat frames) on support for repressive policy (0–10 scale), but allows the Stage 2 performance effect to vary across Stage 1 cells—reflecting our expectation that the performance vignette operates differently depending on the prior framing. Baseline parameters (population mean μ = 5, standard deviation σ = 2) are somewhat arbitrary at this stage.
+The **model** assumes additive effects for the Stage 1 treatments (justice and threat frames) on support for repressive policy (0–10 scale), but allows the Stage 2 performance effect to vary across Stage 1 cells—reflecting our expectation that the performance vignette operates differently depending on the prior framing. Baseline parameters (population mean μ = 5, standard deviation σ = 2) are somewhat arbitrary at this stage.
 
  The **inquiry** consists of two marginal ATEs for the Stage 1 factors (estimated from Y1) and four conditional ATEs for the performance treatment, one per Stage 1 cell (estimated from Y2).
  
@@ -45,42 +49,47 @@ The **answer strategy** uses heteroskedasticity-robust OLS (HC2 standard errors)
 # set seed
 set.seed(030)
 
-# declaration 
+# wrap the full design in a function so parameters can be varied later (e.g. for power analysis)
 declare_repression_design <- function(
 
-  # total sample size
+  # total number of survey respondents
   N              = 2000,
-  # assumed population average on the outcome
-  mu             = 5,
-  # assumed standard deviation of the outcome
+  # expected average repression support score in the population (0–10 scale)
+  mu             = 4,
+  # population standard deviation on the outcome
   sigma          = 2,
-  # assumed true effect of the justice treatment (marginal, from Y1)
-  tau_justice    = 0.3,
-  # assumed true effect of the threat treatment (marginal, from Y1)
-  tau_threat     = 0.3,
-  # cell-specific performance effects (Stage 1 x Stage 2 interaction)
-  # the performance vignette effect is allowed to differ across Stage 1 cells
-  # update these with substantive priors once available
-  tau_perf_j0_t0 = 0.3,  # Restorative Justice x No Threat
-  tau_perf_j1_t0 = 0.3,  # Punitive Justice    x No Threat
-  tau_perf_j0_t1 = 0.3,  # Restorative Justice x Threat
-  tau_perf_j1_t1 = 0.3   # Punitive Justice    x Threat
+  # how much the justice frame shifts repression support on average
+  # weakest of the three treatments (cohen's d ≈ 0.40) (cohens d = tau / sigma)
+  tau_justice    = 0.8,
+  # how much the threat frame shifts repression support on average
+  # second strongest treatment (cohen's d ≈ 0.60)
+  tau_threat     = 1.2,
+  # how much the performance vignette shifts support, estimated separately per stage 1 group
+  # kept small as a conservative placeholder (cohen's d ≈ 0.15) — update when priors are available
+  tau_perf_j0_t0 = 0.3,  # restorative justice × no threat
+  tau_perf_j1_t0 = 0.3,  # punitive justice    × no threat
+  tau_perf_j0_t1 = 0.3,  # restorative justice × threat
+  tau_perf_j1_t1 = 0.3   # punitive justice    × threat
 ) {
 
-  # M: Model ------------------------------------------------------------------
+  # m: model ------------------------------------------------------------------
+  # describe the population and the process that generates outcomes
+
   model <- declare_model(
     N = N,
-    # random baseline noise term drawn from a normal distribution
+    # each respondent gets a personal noise term
     U = rnorm(N, 0, sigma),
-    # post-vignette potential outcomes (before performance treatment)
-    # four counterfactual Y1s per respondent (one per 2x2 cell)
+
+    # stage 1 outcome: repression support after reading the justice and threat vignettes
+    # we define four hypothetical scores per respondent — one for each justice × threat combination
     potential_outcomes(
       Y1 ~ mu + tau_justice * Z_justice + tau_threat * Z_threat + U,
       conditions = list(Z_justice = c(0, 1), Z_threat = c(0, 1))
     ),
-    # post-performance potential outcomes: interaction model
-    # the performance effect is allowed to differ by Stage 1 cell
-    # eight counterfactual Y2s per respondent (one per 2x2x2 cell)
+
+    # stage 2 outcome: repression support after also seeing (or not seeing) the performance vignette
+    # now eight hypothetical scores — one per justice × threat × performance combination
+    # the performance shift is allowed to differ across stage 1 groups (interaction structure)
     potential_outcomes(
       Y2 ~ mu + tau_justice * Z_justice + tau_threat * Z_threat +
            (tau_perf_j0_t0 * (1 - Z_justice) * (1 - Z_threat) +
@@ -95,8 +104,11 @@ declare_repression_design <- function(
     )
   )
 
-  # I: Inquiry ----------------------------------------------------------------
-  # Marginal ATE for justice frame, averaged over threat conditions (from Y1)
+  # i: inquiry ----------------------------------------------------------------
+  # define the causal quantities we actually want to know
+
+  # average effect of the justice frame — averaged across both threat conditions
+  # answers: does it matter whether policy is restorative vs. punitive?
   inquiry_justice <- declare_inquiry(
     ATE_Justice = mean(
       (Y1_Z_justice_1_Z_threat_0 + Y1_Z_justice_1_Z_threat_1) / 2 -
@@ -104,7 +116,8 @@ declare_repression_design <- function(
     )
   )
 
-  # Marginal ATE for threat frame, averaged over justice conditions (from Y1)
+  # average effect of the threat frame — averaged across both justice conditions
+  # answers: does target framing as a threat increase repression support?
   inquiry_threat <- declare_inquiry(
     ATE_Threat = mean(
       (Y1_Z_justice_0_Z_threat_1 + Y1_Z_justice_1_Z_threat_1) / 2 -
@@ -112,7 +125,9 @@ declare_repression_design <- function(
     )
   )
 
-  # Conditional ATEs of performance within each Stage 1 cell (from Y2)
+  # effect of the performance vignette within each of the four stage 1 groups
+  # estimated separately because the theory expects the performance update to work
+  # differently depending on which justice and threat frame the respondent already saw
   inquiry_perf_j0_t0 <- declare_inquiry(
     ATE_Perf_Restorative_NoThreat = mean(
       Y2_Z_justice_0_Z_threat_0_Z_performance_1 -
@@ -141,33 +156,42 @@ declare_repression_design <- function(
     )
   )
 
-  # D: Data Strategy ----------------------------------------------------------
-  # Stage 1: complete random assignment to 2x2 (500 per cell)
+  # d: data strategy ----------------------------------------------------------
+  # mirror the two-stage randomization from the experiment
+
+  # stage 1: randomly split respondents into punitive vs. restorative justice (50/50)
   assign_justice <- declare_assignment(Z_justice     = complete_ra(N, prob = 0.5))
+  # stage 1: independently assign half to see the threat frame
   assign_threat  <- declare_assignment(Z_threat      = complete_ra(N, prob = 0.5))
+  # record repression support after respondents read their stage 1 vignette combination
   measure_Y1     <- declare_measurement(Y1 = reveal_outcomes(Y1 ~ Z_justice + Z_threat))
 
-  # Stage 2: complete random assignment to performance (250 per sub-cell)
+  # stage 2: within each stage 1 group, randomly assign half to the performance vignette
   assign_performance <- declare_assignment(Z_performance = complete_ra(N, prob = 0.5))
+  # record repression support again after the performance vignette
   measure_Y2         <- declare_measurement(
     Y2 = reveal_outcomes(Y2 ~ Z_justice + Z_threat + Z_performance)
   )
 
-  # A: Answer Strategy --------------------------------------------------------
-  # Marginal Stage 1 effects estimated on Y1
+  # a: answer strategy --------------------------------------------------------
+  # estimate each effect with ols; robust standard errors guard against unequal variance across groups
+
+  # justice frame effect: compare average y1 between punitive and restorative justice groups
   estimator_justice <- declare_estimator(
     Y1 ~ Z_justice,
     .method = lm_robust, term = "Z_justice",
     inquiry = "ATE_Justice", label = "Justice Frame"
   )
 
+  # threat frame effect: compare average y1 between threat and no-threat groups
   estimator_threat <- declare_estimator(
     Y1 ~ Z_threat,
     .method = lm_robust, term = "Z_threat",
     inquiry = "ATE_Threat", label = "Threat Frame"
   )
 
-  # Conditional performance effects: subset Y2 to each Stage 1 cell
+  # performance vignette effects: run a separate regression within each stage 1 group
+  # subsetting ensures we only compare respondents who received the same prior framing
   estimator_perf_j0_t0 <- declare_estimator(
     Y2 ~ Z_performance, .method = lm_robust,
     subset = Z_justice == 0 & Z_threat == 0,
@@ -196,7 +220,7 @@ declare_repression_design <- function(
     inquiry = "ATE_Perf_Punitive_Threat", label = "Perf: Punitive, Threat"
   )
 
-  # MIDA ----------------------------------------------------------------------
+  # chain all mida components together in the order they occur in the study
   model +
     inquiry_justice + inquiry_threat +
     inquiry_perf_j0_t0 + inquiry_perf_j1_t0 + inquiry_perf_j0_t1 + inquiry_perf_j1_t1 +
@@ -206,13 +230,13 @@ declare_repression_design <- function(
     estimator_perf_j0_t0 + estimator_perf_j1_t0 + estimator_perf_j0_t1 + estimator_perf_j1_t1
 }
 
-# declare 
+# instantiate the design with default parameters
 base_design <- declare_repression_design()
 
-# diagnose
-diagnosis <- diagnose_design(base_design, sims = 1000)
+# run 1,000 simulated studies and compute key diagnosands (bias, power, coverage, rmse)
+diagnosis <- diagnose_design(base_design, sims = 2500)
 
-# display
+# display results as a formatted table
 diagnosis$diagnosands_df |>
   select(
     Treatment  = estimator,
@@ -226,26 +250,26 @@ diagnosis$diagnosands_df |>
   ) |>
   mutate(across(where(is.numeric), \(x) round(x, 3))) |>
   knitr::kable(
-    caption = "Design diagnosis (1,000 simulations, τ = 0.3 for all effects, N = 2,000)",
+    caption = "Design diagnosis (1,000 simulations, τ_justice = 0.8, τ_threat = 1.2, τ_performance = 0.3, N = 2,000)",
     align   = c("l", rep("r", 7))
   )
 ```
 
-Interpretation: Diagnosands look good for stage 1 and bad for stage 2. 
+Interpretation: Diagnosands look good for stage 1 and bad for stage 2. Substantively we are really interested how this performance-update changes the attitudes. This is the theoretical contribution to the triadic model of repression.
 
-## Power Analysis for Performance Vignettes
+## Required Effect Size by Sample Size
 
-Our main design-based concern right now is that we end up with pretty small N for the second stage analysis of the performance frames: With a total N of 2,000, each cell contains approximately 500 respondents, split 250/250 between performance and no-performance conditions. The effective per-arm sample size for each conditional estimate is therefore 250 per arm available for the marginal performance ATE. @fig-conditional-power shows how power for the performance ATE varies across a range of total sample sizes.
+The diagnosis table shows that stage 1 (justice and threat frames) is well-powered at N = 2,000, while stage 2 (performance vignette) is severely underpowered under conservative effect size assumptions. This motivates the question: for a given sample size, how large does the true performance effect need to be to reach 80% power? Because each stage 1 cell receives N/4 respondents and the performance treatment splits those 50/50, the effective per-arm N for each conditional performance estimate is only N/8. @fig-tau-power traces how power varies jointly across effect sizes and total sample sizes.
 
 ```{r}
-#| label: conditional-power-declaration
+#| label: tau-power-sim
+#| cache: true
 
-# Single-cell design: performance treatment within one Stage 1 cell.
-# Power depends only on within-cell N and the cell-specific tau,
-# so we vary N and tau separately to trace the power surface.
+# helper function: a stripped-down single-cell design for the performance treatment
+declare_cell_design <- function(N_cell, mu = 4, sigma = 2, tau_performance = 0.3) {
 
-declare_cell_design <- function(N_cell, mu = 5, sigma = 2, tau_performance = 0.3) {
-
+  # same logic as in the main design: baseline + performance shift + individual noise
+  # but now we only have one binary treatment (performance yes/no)
   model <- declare_model(
     N = N_cell,
     U = rnorm(N_cell, 0, sigma),
@@ -255,14 +279,14 @@ declare_cell_design <- function(N_cell, mu = 5, sigma = 2, tau_performance = 0.3
     )
   )
 
-  inquiry <- declare_inquiry(
-    ATE_Performance = mean(Y_Z_performance_1 - Y_Z_performance_0)
-  )
-
-  assignment  <- declare_assignment(Z_performance = complete_ra(N_cell, prob = 0.5))
+  # the quantity we want: average difference in support between performance and no-performance
+  inquiry    <- declare_inquiry(ATE_Performance = mean(Y_Z_performance_1 - Y_Z_performance_0))
+  # randomly assign half the cell to see the performance vignette
+  assignment <- declare_assignment(Z_performance = complete_ra(N_cell, prob = 0.5))
+  # observe the outcome for the assigned condition
   measurement <- declare_measurement(Y = reveal_outcomes(Y ~ Z_performance))
-
-  estimator <- declare_estimator(
+  # estimate the effect with robust ols
+  estimator  <- declare_estimator(
     Y ~ Z_performance,
     .method = lm_robust, term = "Z_performance",
     inquiry = "ATE_Performance", label = "Performance"
@@ -270,42 +294,60 @@ declare_cell_design <- function(N_cell, mu = 5, sigma = 2, tau_performance = 0.3
 
   model + inquiry + assignment + measurement + estimator
 }
-```
 
-```{r}
-#| label: conditional-power-sim
-#| cache: true
+# define the range of effect sizes (tau) and total sample sizes to explore
+# tau runs from 0.1 (tiny, d = 0.05) to 2.0 (very large, d = 1.0) in steps of 0.1
+# n_totals are the total study sizes; each stage 1 cell gets n_total / 4 respondents,
+# and the performance treatment splits those further 50/50 → n_total / 8 per arm
+tau_vals <- seq(0.1, 2.0, by = 0.1)
+n_totals <- c(1000, 1500, 2000, 2500, 3000)
 
-# Total N values to evaluate; each Stage 1 cell receives N/4 respondents
-n_total <- c(1000, 2000, 3000, 4000, 5000, 6000, 8000)
+# create one row per tau × n combination — 20 taus × 5 sample sizes = 100 designs
+tau_n_grid <- expand.grid(tau = tau_vals, N_total = n_totals)
 
-designs_n <- setNames(
-  lapply(n_total / 4, function(n) declare_cell_design(N_cell = n)),
-  paste0("N = ", n_total)
+# instantiate a separate cell design for each row in the grid
+# each design uses n_total / 4 as the within-cell n (one stage 1 group)
+# and the corresponding tau as the assumed performance effect
+designs_tau_n <- setNames(
+  Map(
+    function(tau, N_total)
+      declare_cell_design(N_cell = N_total / 4, tau_performance = tau),
+    tau_n_grid$tau, tau_n_grid$N_total
+  ),
+  # give each design a unique name so we can match results back to the grid later
+  paste0("tau=", tau_n_grid$tau, ";N=", tau_n_grid$N_total)
 )
 
-diagnoses_n <- diagnose_design(designs_n, sims = 1000)
+# run 500 simulated experiments per design and record statistical power
+diagnoses_tau_n <- diagnose_design(designs_tau_n, sims = 500)
 ```
 
 ```{r}
-#| label: fig-conditional-power
-#| fig-cap: "Statistical power for the performance treatment effect within a single Stage 1 cell (N/4 respondents per cell; N/8 per arm). The dashed line marks the 80% power threshold. Assumes τ = 0.3 scale points, σ = 2; 500 simulations per design."
+#| label: fig-tau-power
+#| fig-cap: "Statistical power for the performance treatment within a single Stage 1 cell as a function of effect size (τ) and total sample size. Per-arm N = N_total / 8. The dashed line marks the 80% power threshold; σ = 2; 500 simulations per design."
 
-n_lookup <- tibble(design = paste0("N = ", n_total), N = n_total)
+# rebuild the lookup table with the same naming convention used for designs_tau_n
+# so we can join simulation results back to their tau and n values for plotting
+tau_n_lookup <- tau_n_grid |>
+  mutate(design = paste0("tau=", tau, ";N=", N_total))
 
-diagnoses_n$diagnosands_df %>% 
-  left_join(n_lookup, by = "design") %>% 
-  ggplot(aes(x = N, y = power)) +
-  geom_line(linewidth = 0.8, color = "#66C2A5") +
-  geom_point(size = 2,       color = "#66C2A5") +
+diagnoses_tau_n$diagnosands_df |>
+  # attach tau and n_total columns to the simulation results
+  left_join(tau_n_lookup, by = "design") |>
+  # x-axis: effect size; y-axis: power; one coloured line per total sample size
+  ggplot(aes(x = tau, y = power,
+             color    = factor(N_total, labels = scales::comma(n_totals)),
+             group    = factor(N_total))) +
+  geom_line(linewidth = 0.8) +
+  geom_point(size = 1.8) +
+  # horizontal reference line at 80% — the conventional minimum acceptable power
   geom_hline(yintercept = 0.80, linetype = "dashed", color = "gray40", linewidth = 0.5) +
-  annotate("text", x = 1000, y = 0.83, label = "80% threshold",
+  annotate("text", x = 0.1, y = 0.83, label = "80% threshold",
            hjust = 0, size = 3.2, color = "gray40") +
+  scale_color_brewer(palette = "Set2", name = "Total N") +
+  # show power as a percentage and effect size in raw scale points
   scale_y_continuous(limits = c(0, 1), labels = percent_format(accuracy = 1)) +
-  scale_x_continuous(labels = scales::comma) +
-  labs(
-    x = "Sample Size (N)",
-    y = "Power"
-  ) +
-  theme_minimal(base_size = 12)
+  labs(x = "Effect Size (τ, scale points)", y = "Power") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "right")
 ```
