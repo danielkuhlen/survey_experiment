@@ -1,0 +1,307 @@
+W---
+title: "Design Declaration"
+subtitle: "Punish or Reconcile? Target Framing, Performance Cues, and Authoritarian Legitimation through Repression"
+author:
+    - Daniel Kuhlen
+    - Giovanna Lapresa
+    - Jorge Zavala
+date: today
+format:
+  html:
+    embed-resources: true
+bibliography: ../../05_bibliography/bib.bib
+---
+
+```{r}
+#| include: false
+
+# packages
+pacman::p_load(tidyverse,
+               rio,
+               DeclareDesign,
+               estimatr,
+               scales)
+```
+
+# Theory
+
+This experiment examines how citizens update their support for repressive government policies based on three informational dimensions: the nature of the justice policy (punitive vs. restorative), the framing of the targeted group (as a threat or not), and performance information about the policy (positive, negative, or absent).
+
+We build on @lachapelle2022's triadic model of repression, which theorizes that bystander citizens evaluate repressive policies through a legitimacy lens, and extend it with a performance dimension following @przeworski2023.
+
+## Mechanism: Implicit Performance Beliefs
+
+Our central hypothesis is that citizens support punitive justice policies partly because they *implicitly assume* these policies are more effective---especially when the targeted group is framed as a threat. The performance dimension in our design allows us to test this mechanism.
+
+Following @acharya2018, we treat performance information as a **manipulated mediator** for the justice frame effect. When no performance information is provided (the "natural-mediator" condition), respondents rely on their prior beliefs about policy effectiveness---which we hypothesize are biased toward assuming punitive policies work better. When performance information *is* provided (the "manipulated-mediator" condition), these implicit beliefs are overridden by the experimental cue, and the justice frame effect should change.
+
+The **eliminated effect** [@acharya2018]---the difference between the justice frame effect with and without performance information---captures how much of the punitive justice premium is explained by implicit performance beliefs (through either indirect effects or causal interactions). A large eliminated effect would indicate that performance assumptions are a key mechanism driving support for punitive repression.
+
+# Design
+
+We implement a **2 x 2 x 3 conjoint-style vignette experiment** with repeated measures. Each respondent reads a series of short vignettes describing a government policy and is asked to rate their support for the policy on a 0--10 scale after each one.
+
+## Factors
+
+The three experimental factors and their levels are:
+
+| Factor | Levels | Description |
+|--------|--------|-------------|
+| **Justice Policy** | Punitive, Restorative | Whether the policy is framed as punitive or restorative |
+| **Threat Framing** | Threat, No Threat | Whether the targeted group is described as a threat |
+| **Performance Information** | None, Positive, Negative | Whether and what kind of policy performance information is provided |
+
+This factorial crossing produces **12 unique vignette types** (2 x 2 x 3 = 12).
+
+## Within-Subjects Design
+
+Each respondent is randomly assigned to see **K = 5** vignette scenarios. After reading each vignette, the respondent answers the same outcome battery (support for repressive policy on a 0--10 scale). This within-subjects repeated-measures design dramatically increases the effective analytical sample: with N respondents, we observe N x K = N x 5 respondent-vignette observations.
+
+## Randomization Strategy
+
+Following @hainmueller2014, the three attribute levels are **independently randomized** for each profile (i.e., the level of one attribute does not depend on the levels of the others). Each respondent sees **K = 5 distinct vignette types** sampled without replacement from the 12 possible combinations, ensuring variety across tasks. The key identification assumptions for AMCEs are:
+
+1. **No carryover effects**: a respondent's evaluation of one vignette is not affected by previously seen vignettes
+2. **No profile-order effects**: the position of a vignette in the sequence does not affect evaluations
+3. **Independent attribute randomization**: attribute levels are uncorrelated within each profile
+
+Per @humphreys2026, we are explicit that our estimands are **effects of information** (the vignette content) on stated policy support, not effects on underlying beliefs or latent preferences. We also note the risk of cross-attribute belief updating: seeing a "punitive" justice frame may cause respondents to infer threat, which we address through the fully randomized design that breaks any structural correlation between attributes.
+
+## Causal Mechanisms via Manipulated Mediator
+
+Following @acharya2018, the 2 x 2 x 3 design can be read as a conjoint experiment with an embedded manipulated-mediator structure:
+
+- **Natural-mediator arm** (performance = "none"): Only the justice and threat frames are varied. Respondents rely on their *implicit beliefs* about policy effectiveness. In this arm, we estimate the **total effect** of the justice frame, which bundles together direct preferences and any indirect effect flowing through assumed effectiveness.
+- **Manipulated-mediator arms** (performance = "positive" or "negative"): Performance information is provided, fixing the respondent's information about policy effectiveness at a particular value. In these arms, we estimate the **controlled direct effect** (ACDE) of the justice frame---the part of the effect that persists even when effectiveness beliefs are experimentally overridden.
+
+The **eliminated effect** is the difference: $\Delta = \text{ATE}_{\text{justice}} - \text{ACDE}_{\text{justice}}$. A positive eliminated effect indicates that implicit performance beliefs explain part of the punitive justice premium, either through mediation (punitive → assumed effective → support) or interaction (the justice effect depends on effectiveness context). Following @acharya2018, this design avoids the strong sequential ignorability assumption of traditional mediation analysis by *randomizing* the mediator rather than merely observing it.
+
+## Design Declaration
+
+The **model** assumes additive main effects for the three factors on support for repressive policy (0--10 scale), plus an interaction between the justice frame and performance information provision---reflecting the hypothesis that providing performance information changes the justice frame effect. The data-generating process includes a respondent-level random intercept and task-level noise, producing within-respondent correlation (ICC $\approx$ 0.8) consistent with repeated attitudinal measures. Baseline parameters (population mean $\mu$ = 4, standard deviation $\sigma$ = 2) are placeholders.
+
+The **inquiry** consists of four AMCEs, plus the eliminated effect following @acharya2018: the difference between the justice frame AMCE in the natural-mediator arm (no performance info) and in the manipulated-mediator arms (performance info provided). This captures how much of the punitive justice premium is explained by implicit performance beliefs.
+
+The **data strategy** implements full independent randomization of attribute levels for each respondent-task observation, following the conjoint design described above.
+
+The **answer strategy** uses OLS with CR2 cluster-robust standard errors at the respondent level, following @hainmueller2014's recommendation for conjoint designs with multiple tasks per respondent. The eliminated effect is estimated via a justice $\times$ performance-info interaction term.
+
+```{r}
+#| label: design-declaration
+
+# set seed
+set.seed(030)
+
+# wrap the design in a function for parameter variation
+declare_conjoint_design <- function(
+
+  # number of survey respondents
+  N              = 2000,
+  # number of vignette tasks per respondent
+  K              = 5,
+  # baseline mean support for repressive policy (0-10 scale)
+  mu             = 4,
+  # population standard deviation (respondent-level)
+  sigma          = 2,
+  # AMCE of punitive (vs. restorative) justice frame
+  tau_justice    = 0.8,
+  # AMCE of threat (vs. no threat) framing
+  tau_threat     = 1.2,
+  # AMCE of positive performance info (vs. no info) - expected to reduce support
+  tau_perf_pos   = -0.5,
+  # AMCE of negative performance info (vs. no info) - expected to increase support
+  tau_perf_neg   = 0.5,
+  # interaction: how much the justice effect changes when performance info is provided
+  # negative = providing performance info reduces the punitive premium (as hypothesized)
+  # following Acharya, Blackwell & Sen (2018): eliminated effect = -tau_interact
+  tau_interact   = -0.4
+) {
+
+  # total number of respondent-task observations
+  N_obs <- N * K
+
+  # m: model ----------------------------------------------------------------
+  # each row is a respondent-task pair
+
+  model <- declare_model(
+    N = N_obs,
+    respondent_id = rep(1:(N/K), each = K),
+    task = rep(1:K, times = N/K),
+    # respondent-level random intercept (constant within respondent)
+    u_i = rep(rnorm(N/K, 0, sigma), each = K),
+    # task-level noise (varies across tasks within respondent)
+    e_ij = rnorm(N, 0, sigma * 0.5)
+  )
+
+  # d: data strategy --------------------------------------------------------
+  # fully randomize each attribute independently for each respondent-task
+  # following Hainmueller, Hopkins & Yamamoto (2014)
+
+  assign_justice <- declare_assignment(
+    Z_justice = complete_ra(N = N_obs, prob = 0.5)
+  )
+
+  assign_threat <- declare_assignment(
+    Z_threat = complete_ra(N = N_obs, prob = 0.5)
+  )
+
+  # performance has 3 levels: "none" (baseline), "positive", "negative"
+  assign_performance <- declare_assignment(
+    Z_performance = complete_ra(
+      N = N_obs,
+      conditions = c("none", "positive", "negative")
+    )
+  )
+
+  # measurement: construct outcome with explicit dummy variables
+  # includes justice x performance-info interaction (Acharya et al. 2018)
+  measure_Y <- declare_measurement(
+    perf_positive = as.numeric(Z_performance == "positive"),
+    perf_negative = as.numeric(Z_performance == "negative"),
+    has_perf_info = as.numeric(Z_performance != "none"),
+    Y = pmin(10, pmax(0,
+      mu +
+      tau_justice   * Z_justice +
+      tau_threat    * Z_threat +
+      tau_perf_pos  * perf_positive +
+      tau_perf_neg  * perf_negative +
+      tau_interact  * Z_justice * has_perf_info +
+      u_i + e_ij
+    ))
+  )
+
+  # i: inquiry --------------------------------------------------------------
+  # AMCEs: the average effect of switching each attribute from baseline
+
+  inquiry_justice <- declare_inquiry(
+    AMCE_Justice = tau_justice,
+    label = "AMCE: Punitive vs. Restorative"
+  )
+
+  inquiry_threat <- declare_inquiry(
+    AMCE_Threat = tau_threat,
+    label = "AMCE: Threat vs. No Threat"
+  )
+
+  inquiry_perf_pos <- declare_inquiry(
+    AMCE_Perf_Positive = tau_perf_pos,
+    label = "AMCE: Positive Performance vs. None"
+  )
+
+  inquiry_perf_neg <- declare_inquiry(
+    AMCE_Perf_Negative = tau_perf_neg,
+    label = "AMCE: Negative Performance vs. None"
+  )
+
+  # justice x performance-info interaction (Acharya et al. 2018)
+  # this is the change in the justice effect when performance info is provided
+  # negative value = performance info reduces the punitive premium
+  # the eliminated effect is the negative of this: -tau_interact > 0
+  inquiry_interaction <- declare_inquiry(
+    Justice_x_PerfInfo = tau_interact,
+    label = "Justice x Perf Info Interaction"
+  )
+
+  # a: answer strategy -------------------------------------------------------
+  # OLS with cluster-robust SEs at respondent level
+
+  # (1) main effects model for AMCEs
+  estimator_amce <- declare_estimator(
+    Y ~ Z_justice + Z_threat + perf_positive + perf_negative,
+    .method = lm_robust,
+    clusters = respondent_id,
+    se_type = "CR2",
+    term = c("Z_justice", "Z_threat", "perf_positive", "perf_negative"),
+    inquiry = c("AMCE_Justice", "AMCE_Threat",
+                "AMCE_Perf_Positive", "AMCE_Perf_Negative"),
+    label = "AMCEs (main effects)"
+  )
+
+  # (2) interaction model for eliminated effect (Acharya et al. 2018)
+  # the coefficient on Z_justice:has_perf_info estimates how the justice effect
+  # changes when performance info is provided; eliminated effect = -1 * this
+  estimator_mechanism <- declare_estimator(
+    Y ~ Z_justice * has_perf_info + Z_threat + perf_positive + perf_negative,
+    .method = lm_robust,
+    clusters = respondent_id,
+    se_type = "CR2",
+    term = "Z_justice:has_perf_info",
+    inquiry = "Justice_x_PerfInfo",
+    label = "Justice x Perf Info (interaction)"
+  )
+
+  # chain MIDA components
+  model +
+    assign_justice + assign_threat + assign_performance +
+    measure_Y +
+    inquiry_justice + inquiry_threat + inquiry_perf_pos + inquiry_perf_neg +
+    inquiry_interaction +
+    estimator_amce + estimator_mechanism
+}
+
+# instantiate with defaults
+base_design <- declare_conjoint_design()
+
+# run simulated experiments and compute diagnosands
+diagnosis <- diagnose_design(base_design, sims = 500)
+
+# display results
+diagnosis$diagnosands_df |>
+  select(
+    Estimand    = inquiry,
+    `True AMCE` = mean_estimand,
+    Estimate    = mean_estimate,
+    Bias        = bias,
+    SD          = sd_estimate,
+    RMSE        = rmse,
+    Power       = power,
+    Coverage    = coverage
+  ) |>
+  mutate(across(where(is.numeric), \(x) round(x, 3))) |>
+  knitr::kable(
+    caption = "Design diagnosis (500 simulations, N = 2,000, K = 5 tasks per respondent)",
+    align   = c("l", rep("r", 7))
+  )
+```
+
+**Interpretation:** The conjoint design with K = 5 tasks per respondent creates an effective analytical sample of N x K = 10,000 observations (for N = 2,000). Because attribute levels are independently randomized across tasks, each AMCE is estimated from the full set of observations. Cluster-robust standard errors account for the within-respondent correlation across the 5 tasks. The key advantage over the previous two-stage design is statistical efficiency: the performance dimension is no longer estimated within small sub-cells (N/8 per arm) but across the full analytical sample. Following @bansak2021, respondents can reliably evaluate up to 5--7 conjoint tasks without significant satisficing.
+
+The **Justice x Perf Info interaction** row captures the eliminated effect logic from @acharya2018. A negative coefficient means that providing performance information *reduces* the punitive justice premium---evidence that implicit performance beliefs are part of the causal mechanism. The eliminated effect (ATE$_{\text{justice}}$ $-$ ACDE$_{\text{justice}}$) is the negative of this coefficient. In the simulation, the true interaction is $\tau_{\text{interact}}$ = -0.4, meaning that 0.4 scale points of the punitive premium (out of 0.8 total) are explained by implicit performance assumptions.
+
+## Power by Sample Size
+
+```{r}
+#| label: fig-power-by-n
+#| fig-cap: "Statistical power for each AMCE as a function of total sample size (N). K = 5 tasks per respondent. Dashed line marks the 80% power threshold."
+#| cache: true
+
+# vary sample size
+n_vals <- c(500, 750, 1000, 1500, 2000, 2500)
+
+designs_by_n <- setNames(
+  lapply(n_vals, function(n) declare_conjoint_design(N = n)),
+  paste0("N=", n_vals)
+)
+
+diagnoses_by_n <- diagnose_design(designs_by_n, sims = 500)
+
+n_lookup <- tibble(
+  design = paste0("N=", n_vals),
+  N = n_vals
+)
+
+diagnoses_by_n$diagnosands_df |>
+  left_join(n_lookup, by = "design") |>
+  ggplot(aes(x = N, y = power, color = inquiry, group = inquiry)) +
+  geom_line(linewidth = 0.8) +
+  geom_point(size = 1.8) +
+  geom_hline(yintercept = 0.80, linetype = "dashed", color = "gray40") +
+  annotate("text", x = 500, y = 0.83, label = "80% threshold",
+           hjust = 0, size = 3.2, color = "gray40") +
+  scale_color_brewer(palette = "Set2", name = "Estimand") +
+  scale_y_continuous(limits = c(0, 1), labels = percent_format(accuracy = 1)) +
+  scale_x_continuous(labels = comma) +
+  labs(x = "Total Respondents (N)", y = "Power") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "right")
+```
